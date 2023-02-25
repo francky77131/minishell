@@ -16,17 +16,14 @@
 
 char	*index_token(char *signe, char *s)
 {
-	int i;
 	int len;
 	
-	i = 0;
 	len = 0;
 	while (s[len])
 		len++;
 	signe = malloc(sizeof(char) * len + 1);
-	signe[0] = 'a';
-	signe[1] = '\0';
-	printf("%s\n", signe);
+	signe[0] = s[0];
+	signe[1] = 0;
 	return signe;
 }
 
@@ -40,7 +37,7 @@ char	*ft_strstr(char *str, char *to_find)
 		return (NULL);
 	while (str[i])
 	{
-		printf("t\n");
+
 		j = 0;
 		while (str[i + j] == to_find[j])
 		{
@@ -58,8 +55,6 @@ char	**get_index_token(char **signe)
 	int i;
 
 	i = 0;
-	signe[i] = index_token(signe[i], "o");
-	i++;
 	signe[i] = index_token(signe[i], "|");
 	i++;
 	signe[i] = index_token(signe[i], "<");
@@ -68,45 +63,34 @@ char	**get_index_token(char **signe)
 	return signe;
 }
 
-int	get_token(void)
+int	get_token(t_pile *start, char **splitted)
 {
-	int i;
 	char	**signe;
+	int i;
 	int j;
-	int size;
-	
-	i = 0;
+
 	j = 0;
-	size = 0;
-	signe = malloc(sizeof(char *) * 5);
+	i = 0;
+	signe = malloc(sizeof(char *) * 4);
 	if (!signe)
 		return (1);
 	signe = get_index_token(signe);
-	//printf("%s\n", signe[1]);
-	// while (start)
-	// {
-	// 	j = 0;
-	// 	while (signe[j])
-	// 	{
-			// if (ft_strstr(splitted[i], signe[j]) != NULL)
-			// {
-				// printf("e\n");
-				// if (start)
-				// {
-				// 	printf("a\n");
-				// 	start->token = i;
-				// 	start = start->next;
-				// 	free(splitted);
-				// 	free_split(signe);
-				// 	break;
-				// }
-			// }
-	// 		//printf("c\n");
-	// 		j++;
-	// 	}
-	// 	i++;
-	// }
-	//free_split(signe);
+	while (start)
+	{
+		i = 0;
+		while (signe[i] && splitted[j])
+		{
+			if (splitted[j][0] == signe[i][0])
+			{
+				start->token = i + 1;
+				break ;
+			}
+			i++;
+		}
+		j++;
+		start = start->next;
+	}
+
 	return (0);
 }
 
@@ -125,7 +109,6 @@ int	main(void)
 		str = readline(BLUE"minishell : "END);
 		splited = ft_split(str, ' ');
 		start = ft_lstnew(0, splited[0]);
-		//get_token(start, splited);
 		while (i < count_words(str, ' '))
 		{
 			tmp = ft_lstnew(0 , splited[i]);
@@ -133,14 +116,14 @@ int	main(void)
 			i++;
 		}
 
-		get_token();
+		get_token(start, splited);
+		//get_token();
 		tmp = start;
-		while (tmp->next)
+		while (tmp)
 		{
-			printf("maillon "RED"%d = %s\n"END, tmp->token, tmp->str);
+			printf("token "RED"%d = %s\n"END, tmp->token, tmp->str);
 			tmp = tmp->next;
 		}
-		printf("maillon "RED"%d = %s\n"END, tmp->token, tmp->str);
 		ft_lstclear(start);
 			
 	}
