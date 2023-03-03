@@ -6,26 +6,11 @@
 /*   By: frgojard <frgojard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/04 02:51:46 by nbled             #+#    #+#             */
-/*   Updated: 2023/02/23 06:31:20 by frgojard         ###   ########.fr       */
+/*   Updated: 2023/03/03 06:09:04 by frgojard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-//donner des token a chque splitted.
-
-char	*index_token(char *signe, char *s)
-{
-	int len;
-	
-	len = 0;
-	while (s[len])
-		len++;
-	signe = malloc(sizeof(char) * len + 1);
-	signe[0] = s[0];
-	signe[1] = 0;
-	return signe;
-}
 
 char	*ft_strstr(char *str, char *to_find)
 {
@@ -50,52 +35,52 @@ char	*ft_strstr(char *str, char *to_find)
 	return (NULL);
 }
 
-char	**get_index_token(char **signe)
+void	get_token_sign(t_pile *start)
 {
-	int i;
-
-	i = 0;
-	signe[i] = index_token(signe[i], "|");
-	i++;
-	signe[i] = index_token(signe[i], "<");
-	i++;
-	signe[i] = index_token(signe[i], ">");
-	return signe;
+	start->token = WORD;
+	if (ft_strstr(start->str, "|") != NULL)
+		start->token = PIPE;
+	else if (ft_strstr(start->str, ">>") != NULL)
+		start->token = RGT_HRDC;
+	else if (ft_strstr(start->str, "<<") != NULL)
+		start->token = LFT_HRDC;
+	else if (ft_strstr(start->str, "<") != NULL)
+		start->token = LFT_RDIR;
+	else if (ft_strstr(start->str, ">") != NULL)
+		start->token = RGT_RDIR;
 }
 
-int	get_token(t_pile *start, char **splitted)
+size_t	ft_strlen(const char *s)
 {
-	char	**signe;
-	int i;
-	int j;
+	int	i;
 
-	j = 0;
 	i = 0;
-	signe = malloc(sizeof(char *) * 4);
-	if (!signe)
-		return (1);
-	signe = get_index_token(signe);
+	if (s == NULL)
+		return (0);
+	while (s[i])
+		i++;
+	return (i);
+}
+
+int	get_token(t_pile *start)
+{
+	t_pile	*tmp;
+
+	tmp = start;
 	while (start)
 	{
-		i = 0;
-		while (signe[i] && splitted[j])
-		{
-			if (splitted[j][0] == signe[i][0])
-			{
-				start->token = i + 1;
-				break ;
-			}
-			i++;
-		}
-		j++;
+		get_token_sign(start);
 		start = start->next;
 	}
-
+	start = tmp;
 	return (0);
 }
 
-int	main(void)
+int	main(int argc, char **argv, char **env)
 {
+	(void)argc;
+	(void)argv;
+	(void)env;
 	t_pile	*start;
 	t_pile	*tmp;
 	char	**splited;
@@ -107,86 +92,68 @@ int	main(void)
 	{
 		i = 1;
 		str = readline(BLUE"minishell : "END);
-		splited = ft_split(str, ' ');
-		start = ft_lstnew(0, splited[0]);
-		while (i < count_words(str, ' '))
+		if (str[0] && quote_check(str) == 0)
 		{
-			tmp = ft_lstnew(0 , splited[i]);
-			ft_lstadd_back(&start, tmp);
-			i++;
+			splited = ft_split(str);
+			start = ft_lstnew(0, splited[0]);
+			while (i < ft_count_words(str))
+			{
+				tmp = ft_lstnew(i, splited[i]);
+				ft_lstadd_back(&start, tmp);
+				i++;
+			}
+			get_token(start);
+			char cwd[1024];
+	if (getcwd(cwd, sizeof(cwd)) != NULL) 
+	{
+		printf("Le répertoire de travail actuel est : %s\n", cwd);
+	}
+	else
+	{
+		perror("Erreur lors de l'appel à getcwd()");
+		return 1;
+	}
+			tmp = start;
+			while (tmp)
+			{
+				printf("maillon "RED"%d = %s Token = %d\n"END, tmp->value, tmp->str, tmp->token);
+				tmp = tmp->next;
+			}
+			ft_lstclear(start);
 		}
-
-		get_token(start, splited);
-		//get_token();
-		tmp = start;
-		while (tmp)
-		{
-			printf("token "RED"%d = %s\n"END, tmp->token, tmp->str);
-			tmp = tmp->next;
-		}
-		ft_lstclear(start);
-			
 	}
 }
 
+//pour env juste a recuperer l'env du main et a l'ecrire en entier si on entre la commande env dans minishell
+//fonction get_env pour recuperer la valeur d'une variable avec le $PATH par ex
 
+//echo est a coder juste avec un printf(blabla...\n) et un printf(blabla...) avec le flag -n qui retire le \n
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// int	main(int argc, char **argv)
-// {
-// 	t_pile	*start;
-// 	t_pile	*tmp;
-// 	int		i;
-
-// 	i = 1;
-// 	start = ft_lstnew(0, argv[0]);
-
-// 	while (i < argc)
-// 	{
-// 		tmp = ft_lstnew(i, argv[i]);
-// 		ft_lstadd_back(&start, tmp);
-// 		i++;
-// 	}
-
-// 	tmp = start;
-// 	while (tmp->next)
-// 	{
-// 		printf("maillon "RED"%d = %s\n"END, tmp->token, tmp->str);
-// 		tmp = tmp->next;
-// 	}
-// 	printf("maillon "RED"%d = %s\n"END, tmp->token, tmp->str);
-
-// 	while (tmp->prev)
-// 	{
-// 		printf("maillon "BLUE"%d = %s\n"END, tmp->token, tmp->str);
-// 		tmp = tmp->prev;
-// 	}
-// 	printf("maillon "BLUE"%d = %s\n"END, tmp->token, tmp->str);
-
-// 	ft_lstclear(start);
+// int main() 
+//{
+	// if (getcwd(cwd, sizeof(cwd)) != NULL) 
+	// {
+	// 	printf("Le répertoire de travail actuel est : %s\n", cwd);
+	// }
+	// else
+	// {
+	// 	perror("Erreur lors de l'appel à getcwd()");
+	// 	return 1;
+	// }
 // }
+
+// int main()
+// {
+// 	if (chdir("/chemin/vers/nouveau/repertoire") == 0) //lui mettre un chemin en utilisant la fonction au dessus avec le pwd
+// 	{
+// 		printf("Le répertoire de travail actuel a été changé.\n");
+// 	}
+// 	else
+// 	{
+// 		perror("Erreur lors de l'appel à chdir()");
+// 		return 1;
+// 	}
+// 	return 0;
+// }
+
+//si str[0] = '$' alors je free str et je le remalloc a la taille de la var d'env

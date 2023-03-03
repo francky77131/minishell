@@ -5,12 +5,12 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: nbled <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/09/20 01:35:44 by nbled             #+#    #+#             */
-/*   Updated: 2022/09/20 01:35:59 by nbled            ###   ########.fr       */
+/*   Created: 2023/02/23 08:19:28 by nbled             #+#    #+#             */
+/*   Updated: 2023/02/23 08:19:30 by nbled            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 void	ft_lstadd_back(t_pile **pile, t_pile *n)
 {

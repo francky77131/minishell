@@ -6,7 +6,7 @@
 /*   By: frgojard <frgojard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 01:32:45 by nbled             #+#    #+#             */
-/*   Updated: 2023/02/23 03:48:50 by frgojard         ###   ########.fr       */
+/*   Updated: 2023/03/03 03:31:32 by frgojard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,14 @@
 # include <sys/ioctl.h>
 # include <termios.h>
 
+typedef struct s_pile
+{
+	int				value;
+	int				token;
+	char			*str;
+	struct s_pile	*prev;
+	struct s_pile	*next;
+}					t_pile;
 
 typedef enum token
 {
@@ -46,29 +54,35 @@ typedef enum token
 	PIPE,
 	LFT_RDIR,
 	RGT_RDIR,
+	RGT_HRDC,
+	LFT_HRDC,
+	FLE,
+	CMD,
 } 	e_token;
 
-typedef struct s_pile
-{
-	int				token;
-	char			*str;
-	struct s_pile	*prev;
-	struct s_pile	*next;
-}					t_pile;
-
-typedef struct s_struct
-{
-	int				nb_of_word;
-}					t_struct;
+// ----------------------------------------------------
+//	LIST
+// ----------------------------------------------------
 
 t_pile	*ft_lstnew(int value, char *str);
-void	ft_lstadd_back(t_pile **pile, t_pile *n);
-size_t	ft_lstsize(t_pile *pile);
 t_pile	*ft_lstlast(t_pile *pile);
+size_t	ft_lstsize(t_pile *pile);
+void	ft_lstadd_back(t_pile **pile, t_pile *n);
 void	ft_lstclear(t_pile *start);
-char	**ft_split(const char *s, char c);
-size_t	count_words(const char *s, char c);
-size_t	sizeof_word(const char *s, char c);
-void	free_split(char **args);
+
+// ----------------------------------------------------
+//	SPLIT
+// ----------------------------------------------------
+
+size_t	ft_count_words(const char *s);
+size_t	ft_str_len(char const *s);
+char	**ft_split(const char *s);
+int		isasep(const char c);
+
+// ----------------------------------------------------
+//	OTHER
+// ----------------------------------------------------
+
+int		quote_check(char *str);
 
 #endif

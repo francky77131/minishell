@@ -1,30 +1,46 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstsize.c                                       :+:      :+:    :+:   */
+/*   ft_str_len.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nbled <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/09/20 01:36:16 by nbled             #+#    #+#             */
-/*   Updated: 2022/09/20 01:36:40 by nbled            ###   ########.fr       */
+/*   Created: 2023/02/23 08:26:45 by nbled             #+#    #+#             */
+/*   Updated: 2023/02/23 08:26:46 by nbled            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
-size_t	ft_lstsize(t_pile *pile)
+size_t	ft_str_len(char const *s)
 {
-	t_pile	*v;
-	size_t	i;
+	int	i;
 
-	if (!pile)
-		return (0);
 	i = 0;
-	v = pile;
-	while (v)
+	if (s[i] == 39)
 	{
-		v = v->next;
+		i++;
+		while (s[i] && s[i] != 39)
+			i++;
 		i++;
 	}
+	else if (s[i] == 34)
+	{
+		i++;
+		while (s[i] && s[i] != 34)
+			i++;
+		i++;
+	}
+	else if (isasep(s[i]))
+	{
+		i++;
+		if (s[i] && s[i - 1] && s[i] == '<' && s[i - 1] == '<')
+			i++;
+		if (s[i] && s[i - 1] && s[i] == '>' && s[i - 1] == '>')
+			i++;
+	}
+	else
+		while (s[i] && s[i] != ' ' && !isasep(s[i]))
+			i++;
 	return (i);
 }

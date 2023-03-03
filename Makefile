@@ -12,12 +12,16 @@
 
 NAME = minishell
 
-SRCS =	ft_lstnew.c \
-		ft_lstadd_back.c \
-		ft_lstsize.c \
-		ft_lstlast.c \
-		ft_lstclear.c \
-		ft_split.c \
+SRCS =	list/ft_lstnew.c \
+		list/ft_lstsize.c \
+		list/ft_lstlast.c \
+		list/ft_lstclear.c \
+		list/ft_lstadd_back.c \
+		split/ft_split.c \
+		split/ft_isasep.c \
+		split/ft_str_len.c \
+		split/ft_count_words.c \
+		quote_check.c \
 		test.c 
 
 OBJS = $(SRCS:.c=.o)

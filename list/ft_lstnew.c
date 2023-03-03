@@ -1,27 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstclear.c                                      :+:      :+:    :+:   */
+/*   ft_lstnew.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nbled <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/09/20 02:45:00 by nbled             #+#    #+#             */
-/*   Updated: 2022/09/20 02:45:17 by nbled            ###   ########.fr       */
+/*   Created: 2023/02/23 08:19:08 by nbled             #+#    #+#             */
+/*   Updated: 2023/02/23 08:19:11 by nbled            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
-void	ft_lstclear(t_pile *start)
+t_pile	*ft_lstnew(int value, char *str)
 {
-	t_pile	*tmp;
-	t_pile	*ptr;
+	t_pile	*n;
 
-	ptr = start;
-	while (ptr)
-	{
-		tmp = ptr->next;
-		free(ptr);
-		ptr = tmp;
-	}
+	n = malloc(sizeof(t_pile));
+	if (!n)
+		return (NULL);
+	n->value = value;
+	n->str = str;
+	n->prev = NULL;
+	n->next = NULL;
+	return (n);
 }
