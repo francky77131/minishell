@@ -35,6 +35,28 @@ char	*ft_strstr(char *str, char *to_find)
 	return (NULL);
 }
 
+char	*ft_strnstr(const char *haystack, const char *needle, size_t len)
+{
+	size_t	i;
+	size_t	j;
+
+	i = 0;
+	if (needle[i] == 0)
+		return ((char *)haystack);
+	while (haystack[i] && i < len)
+	{
+		j = 0;
+		while (needle[j] == haystack[i + j] && (i + j) < len)
+		{
+			j++;
+			if (needle[j] == 0)
+				return ((char *)&haystack[i]);
+		}
+		i++;
+	}
+	return (NULL);
+}
+
 void	get_token_sign(t_pile *start)
 {
 	start->token = WORD;
@@ -76,11 +98,69 @@ int	get_token(t_pile *start)
 	return (0);
 }
 
+void	check_pwd(t_pile *start)
+{
+	char cwd[1024];
+	if (ft_strlen(start->str) == 3)
+	{
+		if (ft_strnstr(start->str, "pwd", 3) != NULL)
+		{
+			if (getcwd(cwd, sizeof(cwd)) != NULL) 
+			{
+				printf("Le répertoire de travail actuel est : %s\n", cwd);
+			}
+			else
+			{
+				perror("Erreur lors de l'appel à getcwd()");
+				//return 1; a check egalement 
+			}
+		}
+	}
+}
+
+void	check_env(t_pile *start, char **env)
+{
+	int	i;
+
+	i = 0;
+	if (ft_strlen(start->str) == 3)
+	{
+		if (ft_strnstr(start->str, "env", 3) != NULL)
+		{
+			while(env[i])
+			{
+				printf("%s\n", env[i]);
+				i++;
+			}
+		}
+	}	
+}
+
+void	check_echo(t_pile *start)
+{
+	if (ft_strlen(start->str) == 4 && ft_lstsize(start) > 1)
+	{
+		if (ft_strnstr(start->str, "echo", 4) != NULL)
+		{
+			if (strstr(start->next->str, "-n") != NULL)
+				printf("%s", start->next->next->str);
+			else
+				printf("%s\n", start->next->str);
+		}
+	}	
+}
+
+void	check_builtin(t_pile *start, char **env)
+{
+	check_pwd(start); //possiblement a proteger si erreur de getcwd mais a voir avec nico a cause des leak...ne pas stopper le prog sans free et close.
+	check_env(start, env);
+	check_echo(start);
+}
+
 int	main(int argc, char **argv, char **env)
 {
 	(void)argc;
 	(void)argv;
-	(void)env;
 	t_pile	*start;
 	t_pile	*tmp;
 	char	**splited;
@@ -103,16 +183,7 @@ int	main(int argc, char **argv, char **env)
 				i++;
 			}
 			get_token(start);
-			char cwd[1024];
-	if (getcwd(cwd, sizeof(cwd)) != NULL) 
-	{
-		printf("Le répertoire de travail actuel est : %s\n", cwd);
-	}
-	else
-	{
-		perror("Erreur lors de l'appel à getcwd()");
-		return 1;
-	}
+			check_builtin(start, env);
 			tmp = start;
 			while (tmp)
 			{
@@ -123,11 +194,6 @@ int	main(int argc, char **argv, char **env)
 		}
 	}
 }
-
-//pour env juste a recuperer l'env du main et a l'ecrire en entier si on entre la commande env dans minishell
-//fonction get_env pour recuperer la valeur d'une variable avec le $PATH par ex
-
-//echo est a coder juste avec un printf(blabla...\n) et un printf(blabla...) avec le flag -n qui retire le \n
 
 // int main() 
 //{

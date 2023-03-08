@@ -15,11 +15,11 @@
 size_t	ft_count_words(const char *s)
 {
 	size_t	words;
-	int		quote;
+	//int		quote;
 	int		i;
 
 	i = 0;
-	quote = 0;
+	//quote = 0;
 	words = 0;
 	while (s[i])
 	{
